@@ -1,0 +1,12 @@
+{
+  "tokenMint": "BGC4wgx1o4oGkUFz5tqJAyLtnJr3M8iTZ3VXus6wMRWy",
+  "tokenAccount": "3rLvA2DVoVS6D4MXRJhFhoKgwsLUFpbbW2LVV3qhgU84",
+  "parentWallet": "DEMWvrmh3d1KfL5Rcpn5LMby1VuNbdkkm4AHKuDy6LWL",
+  "network": "devnet",
+  "symbol": "DEMO-QTC",
+  "name": "Demo QTC Token",
+  "decimals": 6,
+  "initialSupply": 100000,
+  "createSignature": "3fxWqnpLWWTfU5eevuS18DLZs5NQ9FTi3gSQ7qszHcGXfgRcDrP4svonNc9LT1E7bGbUeB5kkeYu7qkAt73DaBsf",
+  "mintSignature": "5xTTKg4ZxB5A5Ee4jMr7HYW5pRrT9SyEUVk5Vwnc8kDXNMPuXzFzgmm5XdpEKsEvHLeWTVEsNDuFAcS88sUaobct"
+}

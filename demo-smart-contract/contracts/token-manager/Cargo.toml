@@ -1,0 +1,21 @@
+[package]
+name = "token-manager"
+version = "0.1.0"
+description = "DEMO-QTC Token Manager Smart Contract"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "token_manager"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = "0.30.0"
+anchor-spl = "0.30.0"
