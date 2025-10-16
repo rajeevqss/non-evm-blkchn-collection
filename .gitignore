@@ -90,7 +90,8 @@ jspm_packages/
 !tsconfig.json
 
 # Solana binaries and releases
-solana-release/
+**/solana-release/
+**/solana-release-*.tar.bz2
 *.tar.bz2
 
 # Temporary files
