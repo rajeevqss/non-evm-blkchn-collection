@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QTC Ecosystem - User Flow Diagrams</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #764ba2;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        .flow-container {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .flow-step {
+            display: inline-block;
+            text-align: center;
+            margin: 0 10px;
+            vertical-align: top;
+        }
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin: 0 auto 10px;
+            color: white;
+            font-weight: bold;
+        }
+        .step-1 { background: linear-gradient(45deg, #4CAF50, #45a049); }
+        .step-2 { background: linear-gradient(45deg, #2196F3, #1976D2); }
+        .step-3 { background: linear-gradient(45deg, #FF9800, #F57C00); }
+        .step-4 { background: linear-gradient(45deg, #9C27B0, #7B1FA2); }
+        .step-5 { background: linear-gradient(45deg, #F44336, #D32F2F); }
+        .step-6 { background: linear-gradient(45deg, #795548, #5D4037); }
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .step-desc {
+            font-size: 0.9em;
+            color: #666;
+            max-width: 120px;
+        }
+        .arrow {
+            display: inline-block;
+            color: #667eea;
+            font-size: 2em;
+            margin: 30px 5px 0 5px;
+            vertical-align: top;
+        }
+        .payment-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .payment-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .payment-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .qtc-payment { border-left: 5px solid #4CAF50; }
+        .stripe-payment { border-left: 5px solid #2196F3; }
+        .bitpay-payment { border-left: 5px solid #FF9800; }
+        .integration-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .system-box {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 10px;
+            flex: 1;
+            min-width: 200px;
+        }
+        .connection-arrow {
+            font-size: 3em;
+            color: #667eea;
+            margin: 0 20px;
+        }
+        @media (max-width: 768px) {
+            .flow-step {
+                display: block;
+                margin: 20px auto;
+            }
+            .arrow {
+                display: block;
+                transform: rotate(90deg);
+                margin: 10px auto;
+            }
+            .integration-diagram {
+                flex-direction: column;
+            }
+            .connection-arrow {
+                transform: rotate(90deg);
+                margin: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QTC Blockchain Ecosystem - User Flow Diagrams</h1>
+        
+        <h2>🔧 POC 1: Smart Contract User Flow</h2>
+        <div class="flow-container">
+            <div class="flow-step">
+                <div class="step-icon step-1">👨‍💻</div>
+                <div class="step-title">Developer/Admin</div>
+                <div class="step-desc">Access smart contract system</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-2">🔧</div>
+                <div class="step-title">Initialize</div>
+                <div class="step-desc">Set up token manager & authority</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-3">📊</div>
+                <div class="step-title">Check Status</div>
+                <div class="step-desc">View balances & contract info</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-4">🎯</div>
+                <div class="step-title">Choose Action</div>
+                <div class="step-desc">Mint, Transfer, or Deactivate</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-5">⚡</div>
+                <div class="step-title">Execute</div>
+                <div class="step-desc">Perform blockchain transaction</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-6">✅</div>
+                <div class="step-title">Confirm</div>
+                <div class="step-desc">Verify on Solana Explorer</div>
+            </div>
+        </div>
+
+        <h2>🛒 POC 2: E-commerce Marketplace User Flow</h2>
+        <div class="flow-container">
+            <div class="flow-step">
+                <div class="step-icon step-1">🌐</div>
+                <div class="step-title">Visit Site</div>
+                <div class="step-desc">Access marketplace</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-2">📱</div>
+                <div class="step-title">Browse</div>
+                <div class="step-desc">View products & details</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-3">🛒</div>
+                <div class="step-title">Add to Cart</div>
+                <div class="step-desc">Select items & quantities</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-4">🔗</div>
+                <div class="step-title">Connect Wallet</div>
+                <div class="step-desc">Link Phantom/Solflare</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-5">💳</div>
+                <div class="step-title">Choose Payment</div>
+                <div class="step-desc">Select payment method</div>
+            </div>
+            <div class="arrow">➡️</div>
+            
+            <div class="flow-step">
+                <div class="step-icon step-6">🎉</div>
+                <div class="step-title">Complete</div>
+                <div class="step-desc">Order confirmation</div>
+            </div>
+        </div>
+
+        <h2>💳 Crypto and Fiat Payment Method Options</h2>
+        <div class="payment-options">
+            <div class="payment-card qtc-payment">
+                <div class="payment-icon">🪙</div>
+                <h3>QTC Tokens</h3>
+                <p><strong>Wallet:</strong> 👻 Phantom / ☀️ Solflare</p>
+                <p><strong>Process:</strong> Connect → Check Balance → Sign Transaction</p>
+                <p><strong>Network:</strong> Solana Devnet</p>
+                <div style="margin-top: 15px;">
+                    <span style="background: #4CAF50; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                        ⚡ Instant & Gas Efficient
+                    </span>
+                </div>
+            </div>
+            
+            <div class="payment-card stripe-payment">
+                <div class="payment-icon">💳</div>
+                <h3>Cards & Crypto</h3>
+                <p><strong>Gateway:</strong> Stripe</p>
+                <p><strong>Options:</strong> Credit/Debit Cards, Apple Pay, USDC</p>
+                <p><strong>Networks:</strong> Ethereum, Polygon, Solana</p>
+                <div style="margin-top: 15px;">
+                    <span style="background: #2196F3; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                        🌍 Global & Trusted
+                    </span>
+                </div>
+            </div>
+            
+            <div class="payment-card bitpay-payment">
+                <div class="payment-icon">₿</div>
+                <h3>Bitcoin & Crypto</h3>
+                <p><strong>Gateway:</strong> BitPay</p>
+                <p><strong>Options:</strong> Bitcoin, Ethereum, 100+ Cryptocurrencies</p>
+                <p><strong>Features:</strong> Lightning Network Support</p>
+                <div style="margin-top: 15px;">
+                    <span style="background: #FF9800; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                        🏢 Enterprise Grade
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <h2>🔗 System Integration</h2>
+        <div class="integration-diagram">
+            <div class="system-box">
+                <h3>🔧 Smart Contract</h3>
+                <p>Token Management</p>
+                <p>Authority Controls</p>
+                <p>Mint & Transfer</p>
+            </div>
+            
+            <div class="connection-arrow">⬌</div>
+            
+            <div class="system-box">
+                <h3>🪙 QTC Token</h3>
+                <p>Shared Infrastructure</p>
+                <p>SPL Token Standard</p>
+                <p>Solana Devnet</p>
+            </div>
+            
+            <div class="connection-arrow">⬌</div>
+            
+            <div class="system-box">
+                <h3>🛒 E-commerce</h3>
+                <p>User Interface</p>
+                <p>Multi-Payment</p>
+                <p>Real-time Updates</p>
+            </div>
+        </div>
+
+        <h2>📋 Demo Sequence</h2>
+        <div class="flow-container" style="background: linear-gradient(45deg, #f8f9ff, #e8f5e8);">
+            <div style="text-align: center; margin: 20px 0;">
+                <h3 style="color: #667eea;">🎯 Part 1: Smart Contract Demo</h3>
+                <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+                    <div style="margin: 10px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #4CAF50;">
+                        <strong>🔗 Explorer</strong><br>
+                        Show live contract
+                    </div>
+                    <span style="font-size: 1.5em; margin: 0 10px;">→</span>
+                    <div style="margin: 10px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #2196F3;">
+                        <strong>💻 Client</strong><br>
+                        Run JS demo
+                    </div>
+                    <span style="font-size: 1.5em; margin: 0 10px;">→</span>
+                    <div style="margin: 10px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #FF9800;">
+                        <strong>🏭 Mint</strong><br>
+                        Create tokens
+                    </div>
+                    <span style="font-size: 1.5em; margin: 0 10px;">→</span>
+                    <div style="margin: 10px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #9C27B0;">
+                        <strong>💸 Transfer</strong><br>
+                        Send tokens
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <h3 style="color: #667eea;">🛍️ Part 2: E-commerce Demo</h3>
+                <div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; margin: 20px 0;">
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">🌐 Browse</div>
+                    <span>→</span>
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">🔗 Connect</div>
+                    <span>→</span>
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">🛒 Cart</div>
+                    <span>→</span>
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">🪙 QTC Pay</div>
+                    <span>→</span>
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">💳 Stripe</div>
+                    <span>→</span>
+                    <div style="margin: 5px; padding: 10px; background: white; border-radius: 6px; font-size: 0.9em;">₿ BitPay</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <h3 style="color: #667eea;">🔄 Part 3: Integration Demo</h3>
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 10px auto; max-width: 600px;">
+                    <p><strong>🎯 Key Demo Points:</strong></p>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li>✅ Same wallet works in both systems</li>
+                        <li>✅ Consistent balance across platforms</li>
+                        <li>✅ Shared QTC token infrastructure</li>
+                        <li>✅ Real-time blockchain updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 40px 0; padding: 30px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border-radius: 15px;">
+            <h2 style="color: white; border: none; margin-bottom: 20px;">Complete Blockchain Commerce Ecosystem</h2>
+            <p style="font-size: 1.2em; margin-bottom: 20px;">Two POCs demonstrate enterprise-ready blockchain integration</p>
+            <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                <div>📊 <strong>Smart Contract:</strong> Technical Foundation</div>
+                <div>🛒 <strong>E-commerce:</strong> User Experience</div>
+                <div>🔗 <strong>Integration:</strong> Seamless Ecosystem</div>
+            </div>
+        </div>
+
+        <h2>🎯 Next Goals / Action Items</h2>
+        
+        <div class="flow-container" style="background: linear-gradient(45deg, #f0f8ff, #e6f3ff);">
+            <h3 style="color: #667eea; text-align: center; margin-bottom: 30px;">Phase 2: Enhanced Integration & Expansion</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0;">
+                
+                <!-- Goal 1: BitPay Integration -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #4CAF50; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h4 style="color: #4CAF50; margin-top: 0;">✅ Goal 1: Complete BitPay Integration</h4>
+                    <p><strong>Status:</strong> <span style="color: #4CAF50;">In Progress</span></p>
+                    <div style="font-size: 0.9em; color: #666;">
+                        <p>✅ BitPay SDK installed and configured</p>
+                        <p>✅ API routes created for invoice generation</p>
+                        <p>✅ UI updated with Bitcoin payment option</p>
+                        <p>✅ Support for 100+ cryptocurrencies</p>
+                        <p>✅ Enterprise-grade security implemented</p>
+                    </div>
+                    <div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>🎯 Next:</strong> Production deployment with live API keys
+                    </div>
+                </div>
+
+                <!-- Goal 2: Project Integration -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #2196F3; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h4 style="color: #2196F3; margin-top: 0;">🔗 Goal 2: Combine Both Projects</h4>
+                    <p><strong>Status:</strong> 🚧 <span style="color: #2196F3;">In Planning</span></p>
+                    <div style="font-size: 0.9em; color: #666;">
+                        <p>🎯 Use deployed smart contracts in e-commerce app</p>
+                        <p>🔄 Direct integration instead of separate systems</p>
+                        <p>⚡ Real-time smart contract interactions</p>
+                        <p>🛒 E-commerce calls smart contract functions</p>
+                        <p>📊 Unified dashboard for admin operations</p>
+                    </div>
+                    <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>🎯 Tasks:</strong> Update e-commerce to call live smart contract, integrate minting/transfer functions
+                    </div>
+                </div>
+
+                <!-- Goal 3: DEX Listing -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #FF9800; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h4 style="color: #FF9800; margin-top: 0;">📈 Goal 3: QTC Token DEX Listing</h4>
+                    <p><strong>Status:</strong> 🚧 <span style="color: #FF9800;">Research Complete</span></p>
+                    <div style="font-size: 0.9em; color: #666;">
+                        <p>🏪 Deploy QTC on Solana DEX platforms</p>
+                        <p>💱 List token on credible exchange sandboxes</p>
+                        <p>💰 Create liquidity pools for trading</p>
+                        <p>📊 Enable price discovery mechanisms</p>
+                        <p>🔄 Integration with marketplace pricing</p>
+                    </div>
+                    <div style="background: #fff3e0; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>🎯 Platforms:</strong> Jupiter, Raydium, Orca (see detailed list below)
+                    </div>
+                </div>
+
+                <!-- Goal 4: Ethereum Version -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #9C27B0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <h4 style="color: #9C27B0; margin-top: 0;">⚡ Goal 4: Ethereum Implementation</h4>
+                    <p><strong>Status:</strong> 📋 <span style="color: #9C27B0;">Planning Phase</span></p>
+                    <div style="font-size: 0.9em; color: #666;">
+                        <p>🔄 Replicate projects in Solidity</p>
+                        <p>⚡ Deploy on Ethereum testnet</p>
+                        <p>🌐 Cross-chain compatibility study</p>
+                        <p>💰 Gas cost optimization</p>
+                        <p>🔗 Multi-chain e-commerce support</p>
+                    </div>
+                    <div style="background: #f3e5f5; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>🎯 Benefits:</strong> Multi-chain ecosystem, broader market reach, technology comparison
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🏪 Credible Solana DEX Platforms for QTC Listing</h2>
+        
+        <div class="flow-container">
+            <h3 style="color: #667eea; text-align: center; margin-bottom: 30px;">🔥 Top-Tier DEX Platforms (2025)</h3>
+            
+            <div class="payment-options" style="margin-bottom: 30px;">
+                
+                <!-- Jupiter Exchange -->
+                <div class="payment-card" style="border-left: 5px solid #4CAF50;">
+                    <div class="payment-icon">🪐</div>
+                    <h3>Jupiter Exchange</h3>
+                    <p><strong>Type:</strong> DEX Aggregator</p>
+                    <p><strong>Volume:</strong> $900M daily</p>
+                    <p><strong>Features:</strong> Best price discovery, cross-DEX routing</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #4CAF50; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            🥇 #1 Solana DEX
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Raydium -->
+                <div class="payment-card" style="border-left: 5px solid #2196F3;">
+                    <div class="payment-icon">⚡</div>
+                    <h3>Raydium</h3>
+                    <p><strong>Type:</strong> AMM + Order Book Hybrid</p>
+                    <p><strong>Features:</strong> Liquidity pools, precision trading</p>
+                    <p><strong>Launched:</strong> Early 2021</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #2196F3; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            Established Leader
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Orca -->
+                <div class="payment-card" style="border-left: 5px solid #FF9800;">
+                    <div class="payment-icon">🐋</div>
+                    <h3>Orca</h3>
+                    <p><strong>Type:</strong> AMM Platform</p>
+                    <p><strong>Volume:</strong> $360M+ daily</p>
+                    <p><strong>Features:</strong> Competitive fees, efficient pricing</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #FF9800; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            🥉 #3 by Volume
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-options">
+                
+                <!-- Lifinity -->
+                <div class="payment-card" style="border-left: 5px solid #9C27B0;">
+                    <div class="payment-icon">♾️</div>
+                    <h3>Lifinity</h3>
+                    <p><strong>Type:</strong> Proactive Market Maker</p>
+                    <p><strong>Volume:</strong> $100M+ daily</p>
+                    <p><strong>Features:</strong> Concentrated liquidity, low impermanent loss</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #9C27B0; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            🔬 Innovation Focus
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Phoenix -->
+                <div class="payment-card" style="border-left: 5px solid #F44336;">
+                    <div class="payment-icon">🔥</div>
+                    <h3>Phoenix DEX</h3>
+                    <p><strong>Type:</strong> Synchronous Settlement</p>
+                    <p><strong>Features:</strong> Immediate execution, low fees</p>
+                    <p><strong>Target:</strong> High-frequency traders</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #F44336; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            ⚡ Speed Optimized
+                        </span>
+                    </div>
+                </div>
+
+                <!-- OpenBook -->
+                <div class="payment-card" style="border-left: 5px solid #795548;">
+                    <div class="payment-icon">📖</div>
+                    <h3>OpenBook</h3>
+                    <p><strong>Type:</strong> Central Limit Order Book</p>
+                    <p><strong>Features:</strong> Limit orders, maker rebates</p>
+                    <p><strong>Fees:</strong> 4 bps taker, 2 bps maker rebate</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #795548; color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.9em;">
+                            📊 Professional Trading
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🧪 Sandbox/Testnet Environments</h2>
+        
+        <div class="flow-container" style="background: linear-gradient(45deg, #e8f5e8, #f0fff0);">
+            <h3 style="color: #4CAF50; text-align: center; margin-bottom: 20px;">🔬 Testing Platforms for QTC Token</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                
+                <!-- Solana Devnet -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #4CAF50;">
+                    <h4 style="color: #4CAF50; margin-top: 0;">🧪 Solana Devnet</h4>
+                    <p><strong>Environment:</strong> Development Network</p>
+                    <div style="font-size: 0.9em; color: #666; margin: 15px 0;">
+                        <p>✅ Free test SOL from faucets</p>
+                        <p>✅ OpenBook & Raydium testing</p>
+                        <p>✅ Full DEX functionality</p>
+                        <p>✅ Risk-free environment</p>
+                    </div>
+                    <div style="background: #e8f5e8; padding: 10px; border-radius: 5px;">
+                        <strong>🔗 Faucet:</strong> <a href="https://faucet.solana.com/" target="_blank" style="color: #4CAF50;">faucet.solana.com</a>
+                    </div>
+                </div>
+
+                <!-- SolaUncher -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #2196F3;">
+                    <h4 style="color: #2196F3; margin-top: 0;">SolaUncher</h4>
+                    <p><strong>Platform:</strong> solauncher.org</p>
+                    <div style="font-size: 0.9em; color: #666; margin: 15px 0;">
+                        <p>✅ Create market on OpenBook</p>
+                        <p>✅ Add liquidity on Raydium</p>
+                        <p>✅ Devnet deployment</p>
+                        <p>✅ Token creation tools</p>
+                    </div>
+                    <div style="background: #e3f2fd; padding: 10px; border-radius: 5px;">
+                        <strong>🎯 Perfect for:</strong> Testing QTC market creation
+                    </div>
+                </div>
+
+                <!-- Additional Faucets -->
+                <div style="background: white; padding: 20px; border-radius: 10px; border: 2px solid #FF9800;">
+                    <h4 style="color: #FF9800; margin-top: 0;">💧 Testing Faucets</h4>
+                    <div style="font-size: 0.9em; color: #666;">
+                        <p><strong>QuickNode:</strong> 0.1 SOL/24h</p>
+                        <p><strong>SOLFaucet:</strong> 1 SOL/24h</p>
+                        <p><strong>Stakely:</strong> 1 SOL/24h</p>
+                    </div>
+                    <div style="background: #fff3e0; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                        <strong>💡 Tip:</strong> Use multiple faucets for extensive testing
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>📋 Implementation Roadmap</h2>
+        
+        <div class="flow-container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+                
+                <!-- Phase 2 -->
+                <div style="flex: 1; min-width: 250px; background: linear-gradient(45deg, #4CAF50, #45a049); color: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: white; margin-top: 0;">Phase 2: Integration</h3>
+                    <p><strong>Timeline:</strong> 2-3 weeks</p>
+                    <ul style="font-size: 0.9em;">
+                        <li>✅ Complete BitPay integration</li>
+                        <li>🔄 Combine smart contract & e-commerce</li>
+                        <li>📊 Unified admin dashboard</li>
+                        <li>🧪 Enhanced testing suite</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 3 -->
+                <div style="flex: 1; min-width: 250px; background: linear-gradient(45deg, #2196F3, #1976D2); color: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: white; margin-top: 0;">📈 Phase 3: DEX Deployment</h3>
+                    <p><strong>Timeline:</strong> 3-4 weeks</p>
+                    <ul style="font-size: 0.9em;">
+                        <li>🧪 Devnet DEX testing</li>
+                        <li>💰 Liquidity pool creation</li>
+                        <li>🏪 Multi-platform listing</li>
+                        <li>📊 Price oracle integration</li>
+                    </ul>
+                </div>
+
+                <!-- Phase 4 -->
+                <div style="flex: 1; min-width: 250px; background: linear-gradient(45deg, #9C27B0, #7B1FA2); color: white; padding: 20px; border-radius: 10px;">
+                    <h3 style="color: white; margin-top: 0;">⚡ Phase 4: Multi-Chain</h3>
+                    <p><strong>Timeline:</strong> 4-6 weeks</p>
+                    <ul style="font-size: 0.9em;">
+                        <li>🔄 Solidity conversion</li>
+                        <li>⚡ Ethereum deployment</li>
+                        <li>🌉 Cross-chain bridge</li>
+                        <li>🌍 Multi-chain marketplace</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

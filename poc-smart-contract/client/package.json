@@ -1,0 +1,18 @@
+{
+  "name": "poc-smart-contract-client",
+  "version": "1.0.0",
+  "description": "Client for interacting with POC-QTC smart contracts",
+  "main": "token-manager-client.js",
+  "scripts": {
+    "demo": "node token-manager-client.js",
+    "test": "node test-client.js"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.87.6",
+    "@solana/spl-token": "^0.3.8",
+    "@coral-xyz/anchor": "^0.29.0"
+  },
+  "keywords": ["solana", "smart-contract", "token", "poc-qtc"],
+  "author": "POC Developer",
+  "license": "MIT"
+}
