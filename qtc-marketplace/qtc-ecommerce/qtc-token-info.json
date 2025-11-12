@@ -1,0 +1,12 @@
+{
+  "tokenMint": "97DBMXWBGAmF8fiWqcmNPuuqCu1MBeWSnpcdsz2vRQni",
+  "tokenAccount": "Afzcj1swadnQZrcqTVX9bTNcLiyP7Tdk7K3MoCpvSyCc",
+  "walletAddress": "QTCawiVYkAnxmkVHzXZNhD8bRdBD6QxENwvkv9oCxTF",
+  "network": "devnet",
+  "symbol": "QTC",
+  "name": "QTC Token",
+  "decimals": 6,
+  "initialSupply": 100000,
+  "createSignature": "zgVS6wu7nZP6BmbAxPRMPwfgAD28hyUKh917V8XErGtS6QAuGUcRmaJeVV3sPYc1wMJ2hxcmUEs5gHYhzwo5X2K",
+  "mintSignature": "5GEiArxBfkmNUcAu2CPngp6XYD62KvponMVr6szCnCQGWgt3bvoLT7bFw2HGe9NeZWyXTUAZX4czDbtcXtsjLxMs"
+}
