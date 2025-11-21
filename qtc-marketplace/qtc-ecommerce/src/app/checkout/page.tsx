@@ -5,6 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletInfo } from '@/components/WalletConnect';
 import { Product, usdToQTC, createStripePayment, createBitPayInvoice, createNOWPayment, getNOWPaymentStatus, NOWPayment } from '@/lib/api';
 import { getQTCBalance, createPaymentTransaction, connection } from '@/lib/solana';
+import CryptoPayment from '@/components/CryptoPayment';
 import Image from 'next/image';
 
 interface CartItem extends Product {
@@ -16,7 +17,7 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [qtcBalance, setQtcBalance] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'qtc' | 'stripe' | 'bitpay' | 'nowpayments'>('qtc');
+  const [paymentMethod, setPaymentMethod] = useState<'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate'>('qtc');
   const [nowPayment, setNowPayment] = useState<NOWPayment | null>(null);
   const [selectedCrypto, setSelectedCrypto] = useState<string>('btc');
   const [paymentStatus, setPaymentStatus] = useState<string>('');
@@ -295,7 +296,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="qtc"
                   checked={paymentMethod === 'qtc'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay')}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -309,7 +310,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="stripe"
                   checked={paymentMethod === 'stripe'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay')}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -323,7 +324,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="bitpay"
                   checked={paymentMethod === 'bitpay'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments')}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -337,12 +338,26 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="nowpayments"
                   checked={paymentMethod === 'nowpayments'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments')}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
                   <div className="font-medium">Crypto QR Payment (NOWPayments)</div>
                   <div className="text-sm text-gray-600">Pay with 300+ cryptocurrencies via QR code - 0.5% fee</div>
+                </div>
+              </label>
+              <label className="flex items-center space-x-3 p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="coingate"
+                  checked={paymentMethod === 'coingate'}
+                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  className="text-blue-600"
+                />
+                <div>
+                  <div className="font-medium">Crypto Payment (CoinGate)</div>
+                  <div className="text-sm text-gray-600">Bitcoin, Ethereum, Lightning Network & 70+ cryptocurrencies</div>
                 </div>
               </label>
             </div>
@@ -582,6 +597,30 @@ export default function CheckoutPage() {
                 Powered by NOWPayments • 0.5% fee • 300+ cryptocurrencies • Production Mode
               </div>
             </>
+          )}
+
+          {paymentMethod === 'coingate' && (
+            <CryptoPayment
+              amount={totalUSD}
+              currency="USD"
+              description={`QTC Marketplace Purchase - ${cartItems.map(item => `${item.title} x${item.quantity}`).join(', ')}`}
+              onSuccess={(order) => {
+                console.log('CoinGate payment successful:', order);
+                // Clear cart after successful payment
+                localStorage.removeItem('qtc-cart');
+                setCartItems([]);
+                alert(`Payment successful! Order ID: ${order.orderId}`);
+              }}
+              onError={(error) => {
+                console.error('CoinGate payment error:', error);
+                alert(`Payment failed: ${error}`);
+              }}
+              onCancel={() => {
+                console.log('CoinGate payment canceled');
+                // Reset payment method back to QTC to show payment options
+                setPaymentMethod('qtc');
+              }}
+            />
           )}
         </div>
       </div>
