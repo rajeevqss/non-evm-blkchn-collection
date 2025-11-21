@@ -22,7 +22,10 @@ export default function RootLayout({
               </h1>
               <nav className="flex space-x-6">
                 <a href="/" className="hover:text-indigo-200 transition-colors">
-                  Dashboard
+                  Home
+                </a>
+                <a href="/explorer" className="hover:text-indigo-200 transition-colors">
+                  Explorer
                 </a>
                 <span className="text-indigo-200">
                   Solana Devnet
