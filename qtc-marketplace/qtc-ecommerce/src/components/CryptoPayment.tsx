@@ -99,6 +99,7 @@ export default function CryptoPayment({
       // Start checking payment status
       startStatusPolling(data.order.id);
       
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating payment order:', error);
       onError?.(error.message);
@@ -258,10 +259,10 @@ export default function CryptoPayment({
     return (
       <div className="w-full p-6 bg-white rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-          💰 Pay with Crypto (CoinGate)
+          Pay with Crypto (CoinGate)
         </h2>
         <div className="bg-green-50 border border-green-200 rounded p-3 mb-4">
-          <p className="text-green-800 text-sm">✅ CoinGate component loaded successfully</p>
+          <p className="text-green-800 text-sm">CoinGate component loaded successfully</p>
         </div>
 
         {/* Debug Info for Demo QR */}
@@ -269,7 +270,7 @@ export default function CryptoPayment({
           <div className="text-center mb-4">
             <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
               <p className="text-yellow-800 text-xs">
-                🔍 Debug: QR Data = {qrCodeDataUrl.slice(0, 50)}... | 
+                Debug: QR Data = {qrCodeDataUrl.slice(0, 50)}... | 
                 Length = {qrCodeDataUrl.length} | 
                 Demo = {isDemoQR ? 'YES' : 'NO'}
               </p>
@@ -282,7 +283,7 @@ export default function CryptoPayment({
           <div className="text-center mb-6">
             <div className="inline-block p-4 bg-white border-2 border-green-500 rounded-lg">
               <div className="bg-green-100 border border-green-300 rounded p-2 mb-2">
-                <p className="text-green-800 text-xs font-medium">✅ Demo QR Code Generated!</p>
+                <p className="text-green-800 text-xs font-medium"> Demo QR Code Generated!</p>
               </div>
               <img src={qrCodeDataUrl} alt="Demo Payment QR Code" className="w-48 h-48 mb-2" />
               <p className="text-xs text-gray-600">
@@ -336,14 +337,14 @@ export default function CryptoPayment({
         </button>
 
         {/* Real Wallet Address QR */}
-        <button
+        {/* <button
           onClick={async () => {
-            console.log('🔄 Generating real wallet address QR...');
+            console.log(' Generating real wallet address QR...');
             try {
               // Use a known valid Solana address (Solana Foundation's address)
               const realAddress = 'So11111111111111111111111111111111111111112'; // Wrapped SOL address
               
-              console.log('📍 Creating real address QR:', realAddress);
+              console.log(' Creating real address QR:', realAddress);
               
               const addressQR = await QRCode.toDataURL(realAddress, {
                 width: 256,
@@ -353,20 +354,20 @@ export default function CryptoPayment({
               
               setQrCodeDataUrl(addressQR);
               setIsDemoQR(true);
-              console.log('✅ Real address QR generated!');
+              console.log(' Real address QR generated!');
               
             } catch (error) {
-              console.error('❌ Error generating address QR:', error);
+              console.error(' Error generating address QR:', error);
             }
           }}
           className="w-full mt-2 py-2 px-4 text-sm bg-green-200 hover:bg-green-300 rounded-lg transition-colors"
         >
-          💰 Generate Real Solana Address QR
-        </button>
+           Generate Real Solana Address QR
+        </button> */}
 
 
         {/* Generate Basic QR Code */}
-        <button
+        {/* <button
           onClick={async () => {
             try {
               console.log('Testing QR generation...');
@@ -386,7 +387,7 @@ export default function CryptoPayment({
           className="w-full mt-2 py-2 px-4 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           🧪 Generate QR Code
-        </button>
+        </button> */}
 
         {/* Phantom-compatible Solana QR - Fixed Format */}
         <button
@@ -430,7 +431,7 @@ export default function CryptoPayment({
           }}
           className="w-full mt-2 py-2 px-4 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
         >
-          👻 Create Phantom Devnet QR
+          Generate QR code - any wallet
         </button>
 
         {onCancel && (
@@ -477,7 +478,7 @@ export default function CryptoPayment({
       <div className="text-center mb-4">
         <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
           <p className="text-yellow-800 text-xs">
-            🔍 Debug: QR Data = {qrCodeDataUrl ? `${qrCodeDataUrl.slice(0, 50)}...` : 'EMPTY'} | 
+             Debug: QR Data = {qrCodeDataUrl ? `${qrCodeDataUrl.slice(0, 50)}...` : 'EMPTY'} | 
             Length = {qrCodeDataUrl.length} | 
             Demo = {isDemoQR ? 'YES' : 'NO'}
           </p>
@@ -503,8 +504,8 @@ export default function CryptoPayment({
                 src={qrCodeDataUrl} 
                 alt="Payment QR Code" 
                 className="w-48 h-48 mb-2 mx-auto border border-gray-300" 
-                onLoad={() => console.log('✅ QR Image loaded successfully')}
-                onError={(e) => console.error('❌ QR Image failed to load:', e)}
+                onLoad={() => console.log(' QR Image loaded successfully')}
+                onError={(e) => console.error(' QR Image failed to load:', e)}
                 style={{ 
                   display: 'block',
                   maxWidth: '100%',
@@ -538,7 +539,7 @@ export default function CryptoPayment({
                         rel="noopener noreferrer"
                         className="block w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                       >
-                        🔗 Open CoinGate Payment Page
+                         Open CoinGate Payment Page
                       </a>
                       <button
                         onClick={async () => {
@@ -557,7 +558,7 @@ export default function CryptoPayment({
                         }}
                         className="w-full py-2 px-4 text-xs bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
                       >
-                        🔄 Check for QR Code
+                         Check for QR Code
                       </button>
                     </div>
                   )}
@@ -649,7 +650,7 @@ export default function CryptoPayment({
         </a>
         
         <div className="text-center text-xs text-gray-500">
-          Click above to open CoinGate's secure payment page where you can pay with any crypto wallet
+          Click above to open CoinGate&apos;s secure payment page where you can pay with any crypto wallet
         </div>
         
         {onCancel && (
