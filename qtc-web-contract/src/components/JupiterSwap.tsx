@@ -1,9 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { VersionedTransaction } from '@solana/web3.js';
+import { CustomWalletButton, WalletButtonStyles } from './WalletButton';
 
-// Popular Solana tokens for swapping
-const POPULAR_TOKENS = [
+import { getCurrentNetworkConfig, CURRENT_NETWORK, NetworkEnvironment } from '../config/network';
+
+// Token lists for different networks
+const MAINNET_TOKENS = [
   {
     symbol: 'SOL',
     name: 'Solana',
@@ -26,27 +31,6 @@ const POPULAR_TOKENS = [
     decimals: 6
   },
   {
-    symbol: 'BONK',
-    name: 'Bonk',
-    mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-    icon: '🐶',
-    decimals: 5
-  },
-  {
-    symbol: 'WIF',
-    name: 'dogwifhat',
-    mint: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm',
-    icon: '🐕',
-    decimals: 6
-  },
-  {
-    symbol: 'JUP',
-    name: 'Jupiter',
-    mint: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
-    icon: '🪐',
-    decimals: 6
-  },
-  {
     symbol: 'QTC',
     name: 'QTC Token',
     mint: '6diASnAchdpwsiqvvi7rcfgztXNbA3RbvSzJXa6BX3iE',
@@ -54,6 +38,42 @@ const POPULAR_TOKENS = [
     decimals: 9
   }
 ];
+
+// For devnet, we still use mainnet token addresses for Jupiter quotes
+// This allows price calculations even though actual swaps won't work
+const DEVNET_TOKENS = [
+  {
+    symbol: 'SOL',
+    name: 'Solana (Quote Mode)',
+    mint: 'So11111111111111111111111111111111111111112', // Wrapped SOL (same on all networks)
+    icon: '☀️',
+    decimals: 9
+  },
+  {
+    symbol: 'USDC',
+    name: 'USDC (Quote Mode)',
+    mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // Use mainnet USDC for quotes
+    icon: '💵',
+    decimals: 6
+  },
+  {
+    symbol: 'USDT', 
+    name: 'USDT (Quote Mode)',
+    mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // Use mainnet USDT for quotes
+    icon: '💚',
+    decimals: 6
+  },
+  {
+    symbol: 'BONK',
+    name: 'BONK (Quote Mode)',
+    mint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', // Use mainnet BONK for quotes
+    icon: '🐶',
+    decimals: 5
+  }
+];
+
+// Select tokens based on current network
+const POPULAR_TOKENS = CURRENT_NETWORK === NetworkEnvironment.MAINNET ? MAINNET_TOKENS : DEVNET_TOKENS;
 
 interface JupiterQuote {
   inputMint: string;
@@ -75,6 +95,9 @@ interface SwapResult {
 }
 
 export default function JupiterSwap() {
+  const { connection } = useConnection();
+  const { publicKey, sendTransaction, connected } = useWallet();
+  
   const [fromToken, setFromToken] = useState(POPULAR_TOKENS[0]); // SOL
   const [toToken, setToToken] = useState(POPULAR_TOKENS[1]); // USDC
   const [amount, setAmount] = useState('');
@@ -94,7 +117,7 @@ export default function JupiterSwap() {
     try {
       const inputAmount = Math.floor(parseFloat(amount) * Math.pow(10, fromToken.decimals));
       
-      // Use our local API route instead of calling Jupiter directly
+      // Always allow quotes - Jupiter API works for price calculations even if swaps don't work on devnet
       const response = await fetch(`/api/jupiter/quote?inputMint=${fromToken.mint}&outputMint=${toToken.mint}&amount=${inputAmount}&slippageBps=50`);
       
       if (!response.ok) {
@@ -113,21 +136,61 @@ export default function JupiterSwap() {
     }
   };
 
-  // Simulate swap (for demo purposes - real implementation would use Jupiter swap API)
+  // Execute swap transaction (or mock for testing wallet flow)
   const executeSwap = async () => {
-    if (!quote) return;
+    if (!quote || !publicKey || !connected) return;
 
     setIsSwapping(true);
     setError('');
 
     try {
-      // Simulate swap execution (in real implementation, you'd use Jupiter's swap API)
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate network delay
+      console.log('🔄 Starting swap execution...');
+
+      // Step 1: Get swap transaction from Jupiter
+      const swapResponse = await fetch('/api/jupiter/swap', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quoteResponse: quote,
+          userPublicKey: publicKey.toString(),
+        }),
+      });
+
+      if (!swapResponse.ok) {
+        const errorData = await swapResponse.json();
+        throw new Error(errorData.error || `Swap API error: ${swapResponse.statusText}`);
+      }
+
+      const { swapTransaction } = await swapResponse.json();
+      console.log('✅ Got swap transaction from Jupiter');
+
+      // Step 2: Deserialize transaction
+      const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
+      let transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+
+      console.log('🔑 Transaction details:');
+      console.log('- Transaction type:', transaction.constructor.name);
+      console.log('- Message instructions count:', transaction.message.compiledInstructions.length);
+      console.log('- Account keys count:', transaction.message.staticAccountKeys.length);
+      
+      console.log('🔑 Sending transaction to wallet...');
+      
+      // This will open Phantom wallet dialog
+      const txid = await sendTransaction(transaction, connection, {
+        skipPreflight: true, // Skip preflight to avoid RPC issues
+        preflightCommitment: 'confirmed',
+        maxRetries: 5,
+      });
+
+      console.log('📡 Transaction sent:', txid);
+      console.log('✅ Wallet dialog should have appeared!');
 
       const outputAmount = parseInt(quote.outAmount) / Math.pow(10, toToken.decimals);
       
       const result: SwapResult = {
-        txid: `demo_tx_${Date.now()}`, // In real app, this would be actual transaction ID
+        txid: txid,
         inputAmount: parseFloat(amount),
         outputAmount: outputAmount,
         fromToken: fromToken.symbol,
@@ -138,34 +201,52 @@ export default function JupiterSwap() {
       setAmount('');
       setQuote(null);
 
-      alert(`✅ Swap Successful! (Demo Mode)
+      alert(`✅ Swap Successful!
       
 Swapped: ${result.inputAmount} ${result.fromToken}
 Received: ${result.outputAmount.toFixed(6)} ${result.toToken}
 Txn ID: ${result.txid}
 
-Note: This is a demo. Real swaps require wallet connection and actual tokens.`);
+View on Solscan: https://solscan.io/tx/${result.txid}`);
 
     } catch (error: any) {
-      console.error('Swap error:', error);
-      setError(`Swap failed: ${error.message}`);
+      console.error('💥 Swap error:', error);
+      
+      // Better error handling for common issues
+      let errorMessage = 'Swap failed';
+      
+      if (error.message.includes('User rejected') || error.message.includes('rejected') || error.message.includes('cancelled')) {
+        errorMessage = '✅ Transaction cancelled by user (this is normal for testing!)';
+      } else if (error.message.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds for this transaction';
+      } else if (error.message.includes('blockhash not found')) {
+        errorMessage = 'Transaction expired. Please try again';
+      } else if (error.message.includes('Transaction simulation failed')) {
+        errorMessage = 'Transaction would fail. Check token balances and try a smaller amount';
+      } else if (error.name === 'WalletSendTransactionError') {
+        errorMessage = `Wallet error: ${error.message}. Try refreshing and reconnecting your wallet`;
+      } else {
+        errorMessage = `Swap failed: ${error.message}`;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSwapping(false);
     }
   };
 
-  // Auto-get quote when amount changes
+  // Auto-get quote when amount changes (with longer debounce)
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (amount && parseFloat(amount) > 0) {
+      if (amount && parseFloat(amount) > 0 && connected) {
         getQuote();
       } else {
         setQuote(null);
       }
-    }, 500); // Debounce
+    }, 1000); // Longer debounce to reduce API calls
 
     return () => clearTimeout(timer);
-  }, [amount, fromToken, toToken]);
+  }, [amount, fromToken, toToken, connected]);
 
   const swapTokens = () => {
     const temp = fromToken;
@@ -177,21 +258,37 @@ Note: This is a demo. Real swaps require wallet connection and actual tokens.`);
   const outputAmount = quote ? (parseInt(quote.outAmount) / Math.pow(10, toToken.decimals)).toFixed(6) : '0';
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-      <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
-        🔄 Jupiter Token Swap
-      </h3>
+    <>
+      <WalletButtonStyles />
+      <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
+        <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+          🔄 Jupiter Token Swap
+        </h3>
       
-      {/* Demo Notice */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-        <div className="flex items-center">
-          <span className="text-yellow-500 text-lg mr-2">⚠️</span>
-          <div>
-            <p className="text-yellow-800 font-medium text-sm">Demo Mode Active</p>
-            <p className="text-yellow-700 text-xs">Quotes are real from Jupiter API, but swaps are simulated. Connect wallet for real trading.</p>
+      {/* Network & Wallet Connection */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <span className="text-blue-500 text-lg mr-2">🔗</span>
+            <div>
+              <p className="text-blue-800 font-medium text-sm">
+                {connected ? `Connected: ${publicKey?.toString().slice(0, 8)}...` : 'Wallet Not Connected'}
+              </p>
+              <p className="text-blue-700 text-xs">
+                Network: <span className="font-medium">{getCurrentNetworkConfig().name}</span> • 
+                {connected ? (
+                  getCurrentNetworkConfig().hasJupiterSupport 
+                    ? ' Ready for Jupiter swaps' 
+                    : ' Limited swap support (Jupiter unavailable)'
+                ) : ' Connect your wallet to start trading'}
+              </p>
+            </div>
           </div>
+          <CustomWalletButton />
         </div>
       </div>
+
+
 
       {/* Swap Interface */}
       <div className="space-y-4">
@@ -320,18 +417,24 @@ Note: This is a demo. Real swaps require wallet connection and actual tokens.`);
         {/* Swap Button */}
         <button
           onClick={executeSwap}
-          disabled={!quote || isSwapping || !amount}
+          disabled={!quote || isSwapping || !amount || !connected}
           className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-            !quote || isSwapping || !amount
+            !quote || isSwapping || !amount || !connected
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-green-600 text-white hover:bg-green-700'
+              : getCurrentNetworkConfig().hasJupiterSupport 
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-yellow-600 text-white hover:bg-yellow-700'
           }`}
         >
-          {isSwapping ? (
+          {!connected ? (
+            'Connect Wallet to Swap'
+          ) : isSwapping ? (
             <>
               <span className="inline-block animate-spin mr-2">⏳</span>
               Swapping...
             </>
+          ) : !getCurrentNetworkConfig().hasJupiterSupport ? (
+            `View Quote Only (${getCurrentNetworkConfig().name})`
           ) : (
             `Swap ${fromToken.symbol} → ${toToken.symbol}`
           )}
@@ -341,13 +444,23 @@ Note: This is a demo. Real swaps require wallet connection and actual tokens.`);
       {/* Last Swap Result */}
       {lastSwap && (
         <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
-          <h4 className="font-medium text-green-900 mb-2">Last Swap (Demo)</h4>
+          <h4 className="font-medium text-green-900 mb-2">Last Swap</h4>
           <div className="text-sm space-y-1">
             <p className="text-green-800">
               ✅ Swapped {lastSwap.inputAmount} {lastSwap.fromToken} → {lastSwap.outputAmount.toFixed(6)} {lastSwap.toToken}
             </p>
             <p className="text-green-700 font-mono text-xs">
               Txn: {lastSwap.txid}
+            </p>
+            <p className="text-green-600 text-xs">
+              <a 
+                href={`https://solscan.io/tx/${lastSwap.txid}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                View on Solscan →
+              </a>
             </p>
           </div>
         </div>
@@ -358,7 +471,8 @@ Note: This is a demo. Real swaps require wallet connection and actual tokens.`);
         <p className="text-xs text-gray-500 text-center">
           Powered by 🪐 <a href="https://jup.ag" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Jupiter</a> • Best rates across Solana
         </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

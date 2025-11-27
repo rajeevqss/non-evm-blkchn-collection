@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import JupiterSwap from '@/components/JupiterSwap';
 
 export default function Home() {
   return (
@@ -13,12 +12,20 @@ export default function Home() {
           A modern web interface for managing Solana smart contracts. 
           Deploy, interact, and monitor your QTC token contracts with ease.
         </p>
-        <Link 
-          href="/explorer"
-          className="inline-flex items-center px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Launch Explorer
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link 
+            href="/swap"
+            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            🔄 Token Swapping Hub
+          </Link>
+          <Link 
+            href="/explorer"
+            className="inline-flex items-center px-8 py-4 bg-green-600 text-white text-lg font-medium rounded-lg hover:bg-green-700 transition-colors"
+          >
+            🔍 Contract Explorer
+          </Link>
+        </div>
       </div>
 
       {/* Features Grid */}
@@ -55,8 +62,8 @@ export default function Home() {
 
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
           <div className="text-3xl mb-4">🔄</div>
-          <h3 className="text-xl font-bold mb-3 text-gray-900">Token Swapping</h3>
-          <p className="text-gray-600">Swap between SOL, USDC, USDT, BONK, JUP, and QTC tokens using Jupiter's aggregated liquidity.</p>
+          <h3 className="text-xl font-bold mb-3 text-gray-900">Token Swapping Hub</h3>
+          <p className="text-gray-600">Compare Jupiter aggregator and Raydium DEX. Create custom pools or use existing liquidity.</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
@@ -66,17 +73,20 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Jupiter Swap Section */}
-      <div className="mb-16">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Token Swapping</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Swap between popular Solana tokens using Jupiter's aggregated liquidity. 
-            Get the best rates across all Solana DEXs in one interface.
+      {/* Token Swapping CTA */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 mb-16">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Start Swapping?</h2>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Explore both Jupiter aggregator and Raydium DEX. Compare features, create custom pools, 
+            and test swapping with your QTC tokens on devnet.
           </p>
-        </div>
-        <div className="max-w-md mx-auto">
-          <JupiterSwap />
+          <Link 
+            href="/swap"
+            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white text-lg font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            🚀 Open Swapping Hub
+          </Link>
         </div>
       </div>
 
@@ -84,8 +94,8 @@ export default function Home() {
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 mb-16">
         <div className="grid md:grid-cols-4 gap-6 text-center">
           <div>
-            <div className="text-3xl font-bold text-blue-600 mb-2">7+</div>
-            <div className="text-gray-600">Supported Tokens</div>
+            <div className="text-3xl font-bold text-blue-600 mb-2">2</div>
+            <div className="text-gray-600">DEX Integrations</div>
           </div>
           <div>
             <div className="text-3xl font-bold text-green-600 mb-2">50+</div>
@@ -110,10 +120,16 @@ export default function Home() {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link 
-            href="/explorer"
+            href="/swap"
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Open Dashboard
+            🔄 Start Swapping
+          </Link>
+          <Link 
+            href="/explorer"
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            🔍 Contract Explorer
           </Link>
           <a 
             href="https://docs.solana.com/developing/programming-model/overview"
@@ -121,7 +137,7 @@ export default function Home() {
             rel="noopener noreferrer"
             className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            View Documentation
+            📚 Documentation
           </a>
         </div>
       </div>
