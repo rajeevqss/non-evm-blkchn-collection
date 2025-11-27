@@ -364,65 +364,8 @@ export default function CryptoPayment({
           💰 Generate Real Solana Address QR
         </button>
 
-        {/* Your Own Wallet QR */}
-        <button
-          onClick={async () => {
-            console.log('🔄 Generating your wallet address QR...');
-            const userAddress = prompt('Enter your Solana wallet address (from Phantom):');
-            if (!userAddress) return;
-            
-            try {
-              console.log('👤 Creating your wallet QR:', userAddress);
-              
-              const walletQR = await QRCode.toDataURL(userAddress.trim(), {
-                width: 256,
-                margin: 2,
-                errorCorrectionLevel: 'M',
-              });
-              
-              setQrCodeDataUrl(walletQR);
-              setIsDemoQR(true);
-              console.log('✅ Your wallet QR generated!');
-              
-            } catch (error) {
-              console.error('❌ Error generating wallet QR:', error);
-            }
-          }}
-          className="w-full mt-1 py-2 px-4 text-xs bg-blue-200 hover:bg-blue-300 rounded-lg transition-colors"
-        >
-          👤 Generate QR with Your Address
-        </button>
 
-        {/* Web URL Test */}
-        <button
-          onClick={async () => {
-            console.log('🔄 Generating web URL QR...');
-            try {
-              // Simple web URL that should work
-              const testUrl = 'https://phantom.app';
-              
-              console.log('🌐 Creating web URL QR:', testUrl);
-              
-              const urlQR = await QRCode.toDataURL(testUrl, {
-                width: 256,
-                margin: 2,
-                errorCorrectionLevel: 'M',
-              });
-              
-              setQrCodeDataUrl(urlQR);
-              setIsDemoQR(true);
-              console.log('✅ Web URL QR generated!');
-              
-            } catch (error) {
-              console.error('❌ Error generating URL QR:', error);
-            }
-          }}
-          className="w-full mt-1 py-2 px-4 text-xs bg-orange-200 hover:bg-orange-300 rounded-lg transition-colors"
-        >
-          🌐 Test with Simple URL
-        </button>
-
-        {/* Debug button for testing QR generation */}
+        {/* Generate Basic QR Code */}
         <button
           onClick={async () => {
             try {
@@ -433,14 +376,61 @@ export default function CryptoPayment({
                 errorCorrectionLevel: 'M',
               });
               setQrCodeDataUrl(testQR);
-              console.log('Test QR generated successfully');
+              setIsDemoQR(true);
+              console.log('Test QR generated successfully, length:', testQR.length);
+              console.log('QR content: test-address-12345');
             } catch (error) {
               console.error('Test QR generation failed:', error);
             }
           }}
-          className="w-full mt-2 py-2 px-4 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+          className="w-full mt-2 py-2 px-4 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
-          🧪 Test Basic QR
+          🧪 Generate QR Code
+        </button>
+
+        {/* Phantom-compatible Solana QR - Fixed Format */}
+        <button
+          onClick={async () => {
+            try {
+              console.log('Creating Phantom-compatible Solana QR...');
+              
+              const parentWallet = '52xR5CuemRBRv3389vEhAeKcg6bTY9Tss7tm7TenXczm';
+              const amount = '0.1';
+              
+              // Try different formats to see which works with Phantom
+              const formats = [
+                // Format 1: Just the wallet address
+                parentWallet,
+                // Format 2: Simple solana: scheme
+                `solana:${parentWallet}`,
+                // Format 3: With amount but no cluster
+                `solana:${parentWallet}?amount=${amount}`,
+                // Format 4: Phantom-specific format
+                `https://phantom.app/ul/browse/${parentWallet}?cluster=devnet`
+              ];
+              
+              // Try format 1 first (just address)
+              const selectedFormat = formats[0];
+              console.log('Testing format:', selectedFormat);
+              
+              const phantomQR = await QRCode.toDataURL(selectedFormat, {
+                width: 256,
+                margin: 2,
+                errorCorrectionLevel: 'M',
+              });
+              
+              setQrCodeDataUrl(phantomQR);
+              setIsDemoQR(true);
+              console.log('Phantom QR generated successfully');
+              console.log('QR content:', selectedFormat);
+              console.log('💡 If this doesn\'t work in Phantom, the address might not be compatible with devnet QR scanning');
+            } catch (error) {
+              console.error('Phantom QR generation failed:', error);
+            }
+          }}
+          className="w-full mt-2 py-2 px-4 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+        >
+          👻 Create Phantom Devnet QR
         </button>
 
         {onCancel && (
@@ -501,8 +491,26 @@ export default function CryptoPayment({
             <div className="text-center">
               <div className="bg-green-100 border border-green-300 rounded p-2 mb-2">
                 <p className="text-green-800 text-xs font-medium">✅ QR Code Generated!</p>
+                <p className="text-green-700 text-xs">Data URL: {qrCodeDataUrl.startsWith('data:image/png;base64,') ? 'Valid PNG' : 'Invalid Format'}</p>
+                <details className="mt-2">
+                  <summary className="text-green-700 text-xs cursor-pointer">🔍 Show QR Content</summary>
+                  <p className="text-green-600 text-xs mt-1 font-mono break-all bg-green-50 p-2 rounded">
+                    Content: {qrCodeDataUrl ? 'Check console for full QR data' : 'No QR data'}
+                  </p>
+                </details>
               </div>
-              <img src={qrCodeDataUrl} alt="Payment QR Code" className="w-48 h-48 mb-2" />
+              <img 
+                src={qrCodeDataUrl} 
+                alt="Payment QR Code" 
+                className="w-48 h-48 mb-2 mx-auto border border-gray-300" 
+                onLoad={() => console.log('✅ QR Image loaded successfully')}
+                onError={(e) => console.error('❌ QR Image failed to load:', e)}
+                style={{ 
+                  display: 'block',
+                  maxWidth: '100%',
+                  height: 'auto'
+                }}
+              />
               <p className="text-xs text-gray-600">
                 {isDemoQR ? 
                   '👻 Demo QR: Scan with Phantom to test (0.1 SOL)' :

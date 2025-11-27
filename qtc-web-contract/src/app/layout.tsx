@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppWalletProvider } from "../components/WalletProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,9 @@ export default function RootLayout({
                 <a href="/" className="hover:text-indigo-200 transition-colors">
                   Home
                 </a>
+                <a href="/swap" className="hover:text-indigo-200 transition-colors">
+                  Token Swap
+                </a>
                 <a href="/explorer" className="hover:text-indigo-200 transition-colors">
                   Explorer
                 </a>
@@ -35,9 +39,11 @@ export default function RootLayout({
           </div>
         </header>
         
-        <main className="min-h-screen bg-gray-50">
-          {children}
-        </main>
+        <AppWalletProvider>
+          <main className="min-h-screen bg-gray-50">
+            {children}
+          </main>
+        </AppWalletProvider>
         
         <footer className="bg-gray-800 text-white py-8">
           <div className="container mx-auto px-4 text-center">

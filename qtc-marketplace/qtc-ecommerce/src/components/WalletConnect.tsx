@@ -26,7 +26,17 @@ export function WalletContextProvider({ children }: { children: React.ReactNode 
 
   return (
     <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider 
+        wallets={wallets} 
+        onError={(error) => {
+          console.error('Wallet error:', error);
+          // Don't throw for WalletNotSelectedError during initialization
+          if (error.name === 'WalletNotSelectedError') {
+            console.log('No wallet selected - this is expected during initial load');
+            return;
+          }
+        }}
+      >
         {children}
       </WalletProvider>
     </ConnectionProvider>
@@ -49,12 +59,22 @@ export function WalletInfo() {
     setIsConnecting(true);
     setShowWalletOptions(false);
     try {
+      console.log('🔗 Attempting to connect to wallet:', walletName);
       select(walletName as any);
       await new Promise(resolve => setTimeout(resolve, 500));
       await connect();
+      console.log('✅ Wallet connected successfully');
     } catch (error) {
       console.error('Connection failed:', error);
-      alert(`Please make sure ${walletName} wallet is installed and unlocked`);
+      if (error.name === 'WalletNotSelectedError') {
+        console.log('Wallet not selected error - trying to reconnect...');
+        // Try again after a short delay
+        setTimeout(() => {
+          connect().catch(console.error);
+        }, 1000);
+      } else {
+        alert(`Please make sure ${walletName} wallet is installed and unlocked`);
+      }
     } finally {
       setIsConnecting(false);
     }
@@ -113,6 +133,16 @@ export function WalletInfo() {
           <p className="text-xs text-gray-500 mb-2 font-mono">
             {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
           </p>
+          {publicKey && (
+            <p className="text-xs mb-3">
+              {publicKey.toString() === '9EUKXSp3jCkfb2v6q7spzcxTbzokow2hLTyX2rET9e9K' ? 
+                '🟢 User Wallet (Expected: 6k QTC)' :
+                publicKey.toString() === '52xR5CuemRBRv3389vEhAeKcg6bTY9Tss7tm7TenXczm' ?
+                '🔵 Parent Wallet (Expected: 95k QTC)' :
+                '⚪ Unknown Wallet'
+              }
+            </p>
+          )}
           
           <div className="bg-white rounded-lg p-4 mb-4">
             <p className="text-2xl font-bold text-green-600">{qtcBalance} QTC</p>

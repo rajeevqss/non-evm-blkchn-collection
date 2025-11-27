@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana DEX Swapping Flow Diagram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-size: 12px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            background: #f9f9f9;
+            position: relative;
+        }
+        
+        .section-title {
+            background: #333;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin: -25px auto 12px auto;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            width: fit-content;
+        }
+        
+        .dex-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .dex-box {
+            flex: 1;
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 12px;
+            background: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .orca {
+            border-color: #4f46e5;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .raydium {
+            border-color: #059669;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .jupiter {
+            border-color: #dc2626;
+            background: linear-gradient(135deg, #f59e0b, #dc2626);
+            color: white;
+        }
+        
+        .dex-title {
+            font-size: 1em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .flow-step {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 6px;
+            border-left: 3px solid #333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            font-size: 0.85em;
+        }
+        
+        .step-number {
+            background: #333;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 8px;
+            font-size: 0.75em;
+        }
+        
+        .highlight {
+            background: #fbbf24;
+            color: #92400e;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+        
+        .success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            color: #065f46;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 1.5em;
+            color: #666;
+            margin: 10px 0;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .comparison-box {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .comparison-title {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            font-size: 0.8em;
+        }
+        
+        .feature-list li {
+            padding: 3px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .user-journey {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-color: #6366f1;
+        }
+        
+        .technical-flow {
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border-color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Solana DEX Swapping Flow Diagram</h1>
+        
+        <!-- User Journey -->
+        <div class="section user-journey">
+            <div class="section-title">👤 User Journey: How Swapping Works</div>
+            
+            <div class="flow-step">
+                <span class="step-number">1</span>
+                <strong>User wants to swap:</strong> 1 SOL → USDC (wants best price)
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">2</span>
+                <strong>User has 3 options:</strong>
+                <ul>
+                    <li>🐋 Go directly to Orca</li>
+                    <li>🌊 Go directly to Raydium</li>
+                    <li>🪐 Use Jupiter (recommended)</li>
+                </ul>
+            </div>
+            
+            <div class="flow-step success">
+                <span class="step-number">3</span>
+                <strong>Smart choice:</strong> Use Jupiter to get best price across ALL platforms
+            </div>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <!-- DEX Comparison -->
+        <div class="section">
+            <div class="section-title">🏗️ DEX Infrastructure: Pool Creation Requirements</div>
+            
+            <div class="dex-container">
+                <div class="dex-box orca">
+                    <div class="dex-title">🐋 Orca</div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">1</span>
+                        <strong>Pool Type:</strong> Pure AMM (Whirlpools)
+                    </div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">2</span>
+                        <strong>Requirements:</strong> Token approval needed
+                    </div>
+                    
+                    <div class="flow-step warning">
+                        <span class="step-number">⚠️</span>
+                        <strong>Limitation:</strong> Custom tokens need Orca team approval
+                    </div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">3</span>
+                        <strong>Process:</strong>
+                        <ul>
+                            <li>Contact Orca team</li>
+                            <li>Token review process</li>
+                            <li>Whitelisting required</li>
+                            <li>Pool creation approved</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flow-step success">
+                        <span class="step-number">✅</span>
+                        <strong>Result:</strong> High-quality, vetted pools
+                    </div>
+                </div>
+                
+                <div class="dex-box raydium">
+                    <div class="dex-title">🌊 Raydium</div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">1</span>
+                        <strong>Pool Type:</strong> Hybrid (OpenBook + AMM)
+                    </div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">2</span>
+                        <strong>Step A:</strong> Create OpenBook Market
+                        <ul>
+                            <li>Order book for limit orders</li>
+                            <li>Price discovery mechanism</li>
+                            <li>Professional trading features</li>
+                            <li>Cost: ~0.7 SOL</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flow-step">
+                        <span class="step-number">3</span>
+                        <strong>Step B:</strong> Create AMM Pool
+                        <ul>
+                            <li>Links to OpenBook market</li>
+                            <li>Provides instant liquidity</li>
+                            <li>Enables retail swaps</li>
+                            <li>Auto-discovered by Jupiter</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flow-step success">
+                        <span class="step-number">✅</span>
+                        <strong>Result:</strong> Full trading ecosystem
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <!-- Jupiter Aggregation -->
+        <div class="section">
+            <div class="section-title">🪐 Jupiter Aggregation Process</div>
+            
+            <div class="dex-box jupiter">
+                <div class="dex-title">🪐 Jupiter: The Smart Router</div>
+                
+                <div class="flow-step">
+                    <span class="step-number">1</span>
+                    <strong>Route Discovery:</strong> Scans all available DEXs
+                    <ul>
+                        <li>🐋 Orca pools</li>
+                        <li>🌊 Raydium pools</li>
+                        <li>📈 Serum markets</li>
+                        <li>🌊 Meteora pools</li>
+                        <li>+ 15 other platforms</li>
+                    </ul>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="step-number">2</span>
+                    <strong>Price Comparison:</strong>
+                    <ul>
+                        <li>Orca: 1 SOL = 99.5 USDC</li>
+                        <li>Raydium: 1 SOL = 100.2 USDC</li>
+                        <li>Meteora: 1 SOL = 99.8 USDC</li>
+                    </ul>
+                </div>
+                
+                <div class="flow-step">
+                    <span class="step-number">3</span>
+                    <strong>Smart Routing:</strong> For large trades, splits order
+                    <ul>
+                        <li>60% through Raydium (best rate)</li>
+                        <li>30% through Meteora</li>
+                        <li>10% through Orca</li>
+                    </ul>
+                </div>
+                
+                <div class="flow-step success">
+                    <span class="step-number">✅</span>
+                    <strong>Final Result:</strong> User gets 100.3 USDC (better than any single DEX!)
+                </div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <!-- Technical Flow -->
+        <div class="section technical-flow">
+            <div class="section-title">⚙️ Technical Flow: Behind the Scenes</div>
+            
+            <div class="flow-step">
+                <span class="step-number">1</span>
+                <strong>User submits swap request:</strong> 1 SOL → ? USDC
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">2</span>
+                <strong>Jupiter API calls:</strong>
+                <ul>
+                    <li>GET /quote?inputMint=SOL&outputMint=USDC&amount=1000000000</li>
+                    <li>Queries all DEX APIs simultaneously</li>
+                    <li>Calculates optimal routing</li>
+                </ul>
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">3</span>
+                <strong>Transaction building:</strong>
+                <ul>
+                    <li>Creates swap instructions for each DEX</li>
+                    <li>Handles token account creation</li>
+                    <li>Sets slippage tolerance</li>
+                    <li>Bundles into single transaction</li>
+                </ul>
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">4</span>
+                <strong>Execution on Solana:</strong>
+                <ul>
+                    <li>User signs transaction with wallet</li>
+                    <li>Transaction submitted to blockchain</li>
+                    <li>Multiple DEX programs execute simultaneously</li>
+                    <li>Final USDC tokens appear in user wallet</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <!-- Why Use Each -->
+        <div class="section">
+            <div class="section-title">🎯 When to Use Each Platform</div>
+            
+            <div class="comparison">
+                <div class="comparison-box">
+                    <div class="comparison-title" style="color: #4f46e5;">🐋 Use Orca When:</div>
+                    <ul class="feature-list">
+                        <li style="color: #065f46;">✅ Creating vetted, high-quality pools</li>
+                        <li style="color: #065f46;">✅ Want concentrated liquidity features</li>
+                        <li style="color: #065f46;">✅ Building institutional-grade protocols</li>
+                        <li style="color: #dc2626;">❌ Can't create custom tokens easily</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-box">
+                    <div class="comparison-title" style="color: #059669;">🌊 Use Raydium When:</div>
+                    <ul class="feature-list">
+                        <li style="color: #065f46;">✅ Launching new tokens immediately</li>
+                        <li style="color: #065f46;">✅ Need professional trading features</li>
+                        <li style="color: #065f46;">✅ Want order book + AMM combo</li>
+                        <li style="color: #d97706;">⚠️ Higher setup costs (~0.7 SOL)</li>
+                    </ul>
+                </div>
+                
+                <div class="comparison-box">
+                    <div class="comparison-title" style="color: #dc2626;">🪐 Use Jupiter When:</div>
+                    <ul class="feature-list">
+                        <li style="color: #065f46;">✅ Just want to swap tokens</li>
+                        <li style="color: #065f46;">✅ Want best prices automatically</li>
+                        <li style="color: #065f46;">✅ Trading large amounts</li>
+                        <li style="color: #065f46;">✅ Don't want to research each DEX</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Summary -->
+        <div class="section" style="background: linear-gradient(135deg, #1f2937, #374151); color: white;">
+            <div class="section-title">🎯 Key Takeaways</div>
+            
+            <div class="flow-step">
+                <span class="step-number">💡</span>
+                <strong>For Users:</strong> Use Jupiter for swapping (it checks all DEXs for you)
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">🏗️</span>
+                <strong>For Token Creators:</strong> Use Raydium for immediate pool creation
+            </div>
+            
+            <div class="flow-step">
+                <span class="step-number">🏢</span>
+                <strong>For Institutions:</strong> Use Orca for vetted, high-quality pools
+            </div>
+            
+            <div class="flow-step success">
+                <span class="step-number">🚀</span>
+                <strong>Best Strategy:</strong> Create pools on Raydium → Users find you via Jupiter automatically!
+            </div>
+        </div>
+    </div>
+</body>
+</html>

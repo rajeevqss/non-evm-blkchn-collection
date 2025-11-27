@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Call Jupiter API from server-side
-    const jupiterUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;
+    // Call Jupiter API from server-side (updated endpoint as of Dec 2024)
+    const jupiterUrl = `https://lite-api.jup.ag/swap/v1/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}`;
     
     console.log('🔗 Calling Jupiter URL:', jupiterUrl);
     
