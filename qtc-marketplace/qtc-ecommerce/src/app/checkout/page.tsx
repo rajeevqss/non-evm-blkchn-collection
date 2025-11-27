@@ -21,6 +21,7 @@ export default function CheckoutPage() {
   const [nowPayment, setNowPayment] = useState<NOWPayment | null>(null);
   const [selectedCrypto, setSelectedCrypto] = useState<string>('btc');
   const [paymentStatus, setPaymentStatus] = useState<string>('');
+  const [pollingTimeoutId, setPollingTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('qtc-cart');
@@ -28,6 +29,16 @@ export default function CheckoutPage() {
       setCartItems(JSON.parse(savedCart));
     }
   }, []);
+
+  // Cleanup polling on component unmount
+  useEffect(() => {
+    return () => {
+      if (pollingTimeoutId) {
+        console.log('🛑 Cleaning up NOWPayments polling on component unmount');
+        clearTimeout(pollingTimeoutId);
+      }
+    };
+  }, [pollingTimeoutId]);
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -38,6 +49,21 @@ export default function CheckoutPage() {
   const totalQTC = cartItems.reduce((sum, item) => 
     sum + (usdToQTC(item.price) * item.quantity), 0
   );
+
+  // Function to stop NOWPayments polling
+  const stopPolling = () => {
+    if (pollingTimeoutId) {
+      console.log('🛑 Manually stopping NOWPayments polling');
+      clearTimeout(pollingTimeoutId);
+      setPollingTimeoutId(null);
+    }
+  };
+
+  // Wrapper function to change payment method and stop polling
+  const changePaymentMethod = (method: 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate') => {
+    stopPolling(); // Stop any ongoing NOWPayments polling
+    setPaymentMethod(method);
+  };
 
   const totalUSD = cartItems.reduce((sum, item) => 
     sum + (item.price * item.quantity), 0
@@ -90,6 +116,16 @@ export default function CheckoutPage() {
       console.error('Payment failed:', error);
       if (error.message?.includes('User rejected')) {
         alert('Payment cancelled by user');
+      } else if (error.message?.includes('Cannot transfer tokens to the same wallet')) {
+        alert(`❌ Payment Failed: You're connected to the store owner's wallet!
+        
+Please switch to a customer wallet in Phantom:
+1. Open Phantom wallet
+2. Click the wallet selector at the top
+3. Switch to a different account that has QTC tokens
+4. Try the payment again
+
+You cannot buy from yourself! 🚫`);
       } else {
         alert('Payment failed. Please try again.\n' + error.message);
       }
@@ -206,24 +242,31 @@ export default function CheckoutPage() {
             localStorage.removeItem('qtc-cart');
             setCartItems([]);
             alert('Payment completed successfully!');
+            // Clear any existing polling
+            if (pollingTimeoutId) clearTimeout(pollingTimeoutId);
             return;
           } else if (status.payment_status === 'failed' || status.payment_status === 'expired') {
             alert('Payment failed or expired. Please try again.');
+            // Clear any existing polling
+            if (pollingTimeoutId) clearTimeout(pollingTimeoutId);
             return;
           }
           
           // Continue polling if payment is still pending
           if (['waiting', 'confirming', 'confirmed', 'sending'].includes(status.payment_status)) {
-            setTimeout(pollPaymentStatus, 5000); // Check every 5 seconds
+            const timeoutId = setTimeout(pollPaymentStatus, 5000); // Check every 5 seconds
+            setPollingTimeoutId(timeoutId);
           }
         } catch (error) {
           console.error('Error checking payment status:', error);
-          setTimeout(pollPaymentStatus, 10000); // Retry after 10 seconds on error
+          const timeoutId = setTimeout(pollPaymentStatus, 10000); // Retry after 10 seconds on error
+          setPollingTimeoutId(timeoutId);
         }
       };
       
       // Start polling after a short delay
-      setTimeout(pollPaymentStatus, 3000);
+      const initialTimeoutId = setTimeout(pollPaymentStatus, 3000);
+      setPollingTimeoutId(initialTimeoutId);
       
     } catch (error: any) {
       console.error('Failed to create NOWPayment:', error);
@@ -296,7 +339,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="qtc"
                   checked={paymentMethod === 'qtc'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  onChange={(e) => changePaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -310,7 +353,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="stripe"
                   checked={paymentMethod === 'stripe'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  onChange={(e) => changePaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -324,7 +367,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="bitpay"
                   checked={paymentMethod === 'bitpay'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  onChange={(e) => changePaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -338,7 +381,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="nowpayments"
                   checked={paymentMethod === 'nowpayments'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  onChange={(e) => changePaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -352,7 +395,7 @@ export default function CheckoutPage() {
                   name="paymentMethod"
                   value="coingate"
                   checked={paymentMethod === 'coingate'}
-                  onChange={(e) => setPaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
+                  onChange={(e) => changePaymentMethod(e.target.value as 'qtc' | 'stripe' | 'bitpay' | 'nowpayments' | 'coingate')}
                   className="text-blue-600"
                 />
                 <div>
@@ -618,7 +661,7 @@ export default function CheckoutPage() {
               onCancel={() => {
                 console.log('CoinGate payment canceled');
                 // Reset payment method back to QTC to show payment options
-                setPaymentMethod('qtc');
+                changePaymentMethod('qtc');
               }}
             />
           )}
